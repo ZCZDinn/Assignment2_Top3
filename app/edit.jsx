@@ -9,10 +9,22 @@ const imageOptions = ['pizza.jpg', 'burger.jpg', 'pasta.jpeg', 'salad.jpg', 'ice
 export default function EditScreen() {
   const { items, updateItem } = useContext(AppContext);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
-  const [formData, setFormData] = useState({ ...items[0] });
+
+  const [formData, setFormData] = useState({
+    ...items[0],
+    preparation: Array.isArray(items[0].preparation)
+      ? items[0].preparation.join('\n')
+      : (items[0].preparation || ''),
+  });
 
   useEffect(() => {
-    setFormData({ ...items[selectedItemIndex] });
+    const selected = items[selectedItemIndex];
+    setFormData({
+      ...selected,
+      preparation: Array.isArray(selected.preparation)
+        ? selected.preparation.join('\n')
+        : (selected.preparation || ''),
+    });
   }, [selectedItemIndex]);
 
   const handleChange = (field, value) => {
@@ -22,7 +34,9 @@ export default function EditScreen() {
   const handleSave = () => {
     const updated = {
       ...formData,
-      preparation: formData.preparation.split('\n'),
+      preparation: typeof formData.preparation === 'string'
+        ? formData.preparation.split('\n')
+        : [],
     };
     updateItem(selectedItemIndex, updated);
   };
@@ -30,9 +44,11 @@ export default function EditScreen() {
   return (
     <View style={appStyles.container}>
       <Text style={appStyles.header}>Edit Recipe</Text>
+
       <Picker
         selectedValue={selectedItemIndex}
-        onValueChange={(value) => setSelectedItemIndex(value)}>
+        onValueChange={(value) => setSelectedItemIndex(value)}
+      >
         {[0, 1, 2].map((index) => (
           <Picker.Item label={`Item ${index + 1}`} value={index} key={index} />
         ))}
@@ -54,9 +70,7 @@ export default function EditScreen() {
 
       <TextInput
         placeholder="Preparation (newline separated)"
-        value={Array.isArray(formData.preparation)
-          ? formData.preparation.join('\n')
-          : formData.preparation}
+        value={formData.preparation}
         onChangeText={(text) => handleChange('preparation', text)}
         multiline
         numberOfLines={4}
@@ -65,7 +79,8 @@ export default function EditScreen() {
 
       <Picker
         selectedValue={formData.imageName}
-        onValueChange={(value) => handleChange('imageName', value)}>
+        onValueChange={(value) => handleChange('imageName', value)}
+      >
         {imageOptions.map((name) => (
           <Picker.Item label={name} value={name} key={name} />
         ))}
