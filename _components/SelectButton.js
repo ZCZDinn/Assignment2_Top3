@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, Text } from 'react-native';
-import { selectButtonStyles } from './styles';
+import { selectButtonStyles } from '../app/styles';
 
 export default function SelectButton({ number, isSelected, onPress }) {
   return (

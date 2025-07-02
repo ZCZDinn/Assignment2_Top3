@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import { topItemStyles } from './styles';
+import { topItemStyles } from '../app/styles';
 
 export default function TopItem({ item }) {
   return (
